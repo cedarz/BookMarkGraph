@@ -53,8 +53,8 @@ body {
 }
 
 .domains-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 25px;
     margin-bottom: 30px;
 }
@@ -335,7 +335,6 @@ body {
     }
     
     .domains-container {
-        grid-template-columns: 1fr;
         gap: 20px;
     }
     
