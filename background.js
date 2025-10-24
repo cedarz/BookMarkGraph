@@ -23,7 +23,7 @@ class BackgroundScript {
                 // 创建主菜单
                 chrome.contextMenus.create({
                     id: 'addToNotes',
-                    title: '添加当前页到',
+                    title: '笔记管理器',
                     contexts: ['link', 'page']
                 });
 
