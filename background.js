@@ -167,31 +167,8 @@ class BackgroundScript {
     }
 
     showCreateDomainDialog(title, url) {
-        // 通过content script显示对话框
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-            if (chrome.runtime.lastError) {
-                console.error('查询标签页时出错:', chrome.runtime.lastError);
-                return;
-            }
-            
-            if (tabs[0]) {
-                try {
-                    chrome.tabs.sendMessage(tabs[0].id, {
-                        action: 'showCreateDomainDialog',
-                        data: { title, url }
-                    }, (response) => {
-                        if (chrome.runtime.lastError) {
-                            console.error('发送消息时出错:', chrome.runtime.lastError);
-                            // 如果content script没有响应，直接显示对话框
-                            this.showCreateDomainFallback(title, url);
-                        }
-                    });
-                } catch (error) {
-                    console.error('发送消息异常:', error);
-                    this.showCreateDomainFallback(title, url);
-                }
-            }
-        });
+        // 直接使用fallback，避免消息传递问题
+        this.showCreateDomainFallback(title, url);
     }
 
     showCreateDomainFallback(title, url) {
@@ -202,30 +179,8 @@ class BackgroundScript {
     }
 
     showSelectDomainDialog(domains, title, url) {
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-            if (chrome.runtime.lastError) {
-                console.error('查询标签页时出错:', chrome.runtime.lastError);
-                return;
-            }
-            
-            if (tabs[0]) {
-                try {
-                    chrome.tabs.sendMessage(tabs[0].id, {
-                        action: 'showSelectDomainDialog',
-                        data: { domains, title, url }
-                    }, (response) => {
-                        if (chrome.runtime.lastError) {
-                            console.error('发送消息时出错:', chrome.runtime.lastError);
-                            // 如果content script没有响应，直接显示对话框
-                            this.showFallbackDialog(domains, title, url);
-                        }
-                    });
-                } catch (error) {
-                    console.error('发送消息异常:', error);
-                    this.showFallbackDialog(domains, title, url);
-                }
-            }
-        });
+        // 直接使用fallback，避免消息传递问题
+        this.showFallbackDialog(domains, title, url);
     }
 
     showFallbackDialog(domains, title, url) {
