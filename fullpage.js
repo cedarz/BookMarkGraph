@@ -379,6 +379,9 @@ class FullPageNotesManager {
 
     // 搜索功能
     searchNotes(keyword) {
+        console.log('搜索关键词:', keyword);
+        console.log('当前领域数据:', this.domains);
+        
         if (!keyword || keyword.trim() === '') {
             this.renderDomains();
             return;
@@ -386,13 +389,25 @@ class FullPageNotesManager {
 
         const results = [];
         const searchTerm = keyword.toLowerCase().trim();
+        console.log('搜索词（处理后）:', searchTerm);
 
         for (const [domainName, notes] of Object.entries(this.domains)) {
-            const matchingNotes = notes.filter(note => 
-                note.title.toLowerCase().includes(searchTerm) ||
-                note.url.toLowerCase().includes(searchTerm) ||
-                this.getDomainName(note.url).toLowerCase().includes(searchTerm)
-            );
+            console.log(`检查领域: ${domainName}, 笔记数量: ${notes.length}`);
+            
+            const matchingNotes = notes.filter(note => {
+                const titleMatch = note.title.toLowerCase().includes(searchTerm);
+                const urlMatch = note.url.toLowerCase().includes(searchTerm);
+                const domainMatch = this.getDomainName(note.url).toLowerCase().includes(searchTerm);
+                
+                console.log(`笔记: ${note.title}`);
+                console.log(`  标题匹配: ${titleMatch} (${note.title.toLowerCase()})`);
+                console.log(`  URL匹配: ${urlMatch} (${note.url.toLowerCase()})`);
+                console.log(`  域名匹配: ${domainMatch} (${this.getDomainName(note.url).toLowerCase()})`);
+                
+                return titleMatch || urlMatch || domainMatch;
+            });
+
+            console.log(`领域 ${domainName} 匹配的笔记数量: ${matchingNotes.length}`);
 
             if (matchingNotes.length > 0) {
                 results.push({
@@ -403,6 +418,7 @@ class FullPageNotesManager {
             }
         }
 
+        console.log('搜索结果:', results);
         this.renderSearchResults(results, keyword);
     }
 
@@ -436,17 +452,25 @@ class FullPageNotesManager {
         const searchInput = document.getElementById('searchInput');
         const clearSearch = document.getElementById('clearSearch');
 
+        console.log('绑定搜索事件:', { searchInput, clearSearch });
+
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
+                console.log('搜索输入事件触发:', e.target.value);
                 this.searchNotes(e.target.value);
             });
+        } else {
+            console.error('未找到搜索输入框');
         }
 
         if (clearSearch) {
             clearSearch.addEventListener('click', () => {
+                console.log('清除搜索');
                 searchInput.value = '';
                 this.renderDomains();
             });
+        } else {
+            console.error('未找到清除按钮');
         }
     }
 }
