@@ -271,11 +271,17 @@ class ContentScript {
             }
         } catch (error) {
             console.log('无法获取URL的title，使用备用方案:', error.message);
-            // 如果fetch失败，使用当前页面的title作为备用
-            const pageTitle = document.title;
-            if (pageTitle && pageTitle.trim()) {
-                title = pageTitle.trim();
-                console.log('使用当前页面title作为备用:', title);
+            // 如果fetch失败，使用链接的文本内容作为备用
+            if (rawTitle && rawTitle.trim()) {
+                title = rawTitle.trim();
+                console.log('使用链接文本作为备用:', title);
+            } else {
+                // 如果链接文本也没有，使用当前页面的title
+                const pageTitle = document.title;
+                if (pageTitle && pageTitle.trim()) {
+                    title = pageTitle.trim();
+                    console.log('使用当前页面title作为备用:', title);
+                }
             }
         }
         
