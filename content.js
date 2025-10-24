@@ -223,12 +223,24 @@ class ContentScript {
         console.log('发送消息到background script:', { title, url });
 
         // 发送消息到background script
-        chrome.runtime.sendMessage({
-            action: 'showAddNoteDialog',
-            data: { title, url }
-        }, (response) => {
-            console.log('Background script响应:', response);
-        });
+        try {
+            chrome.runtime.sendMessage({
+                action: 'showAddNoteDialog',
+                data: { title, url }
+            }, (response) => {
+                if (chrome.runtime.lastError) {
+                    console.error('发送消息失败:', chrome.runtime.lastError);
+                    // 如果扩展上下文失效，直接显示对话框
+                    this.showAddNoteDialog(targetLink);
+                } else {
+                    console.log('Background script响应:', response);
+                }
+            });
+        } catch (error) {
+            console.error('发送消息异常:', error);
+            // 如果扩展上下文失效，直接显示对话框
+            this.showAddNoteDialog(targetLink);
+        }
     }
 
     addContextMenuSupport() {
