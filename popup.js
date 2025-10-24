@@ -188,6 +188,9 @@ class NotesManager {
                         <button class="text-btn add-note-btn" data-domain="${domainName}">
                             + 添加笔记
                         </button>
+                        <button class="text-btn edit-domain-btn" data-domain="${domainName}">
+                            修改名称
+                        </button>
                         <button class="text-btn text-btn-danger delete-domain-btn" data-domain="${domainName}">
                             删除领域
                         </button>
@@ -234,6 +237,11 @@ class NotesManager {
                 const domainName = e.target.dataset.domain;
                 this.showAddNoteForm(domainName);
             }
+            // 处理修改领域名按钮
+            else if (e.target.classList.contains('edit-domain-btn')) {
+                const domainName = e.target.dataset.domain;
+                this.editDomainName(domainName);
+            }
             // 处理删除领域按钮
             else if (e.target.classList.contains('delete-domain-btn')) {
                 const domainName = e.target.dataset.domain;
@@ -248,6 +256,27 @@ class NotesManager {
         
         if (url) {
             this.addNote(domainName, title, url);
+        }
+    }
+
+    editDomainName(oldDomainName) {
+        const newDomainName = prompt('请输入新的领域名称:', oldDomainName);
+        
+        if (newDomainName && newDomainName.trim() && newDomainName !== oldDomainName) {
+            // 检查新名称是否已存在
+            if (this.domains[newDomainName]) {
+                alert('该领域名称已存在，请选择其他名称');
+                return;
+            }
+            
+            // 重命名领域
+            const notes = this.domains[oldDomainName];
+            delete this.domains[oldDomainName];
+            this.domains[newDomainName] = notes;
+            
+            // 保存数据并重新渲染
+            this.saveData();
+            this.renderDomains();
         }
     }
 
