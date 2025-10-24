@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 笔记管理器调试测试</h1>
+    
+    <div class="test-section">
+        <h3>📋 基础测试</h3>
+        <button class="btn-primary" onclick="testChromeAPI()">测试Chrome API</button>
+        <button class="btn-primary" onclick="testStorage()">测试存储</button>
+        <button class="btn-primary" onclick="testMessage()">测试消息传递</button>
+        <button class="btn-secondary" onclick="clearLog()">清空日志</button>
+    </div>
+
+    <div class="test-section">
+        <h3>📝 笔记功能测试</h3>
+        <button class="btn-primary" onclick="testAddNote()">测试添加笔记</button>
+        <button class="btn-primary" onclick="testCreateDomain()">测试创建领域</button>
+        <button class="btn-primary" onclick="testListDomains()">测试列出领域</button>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 调试日志</h3>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function testChromeAPI() {
+            log('测试Chrome API...');
+            if (typeof chrome !== 'undefined') {
+                log('✓ Chrome API 可用');
+                if (chrome.runtime) {
+                    log('✓ chrome.runtime 可用');
+                } else {
+                    log('✗ chrome.runtime 不可用');
+                }
+                if (chrome.storage) {
+                    log('✓ chrome.storage 可用');
+                } else {
+                    log('✗ chrome.storage 不可用');
+                }
+            } else {
+                log('✗ Chrome API 不可用');
+            }
+        }
+
+        function testStorage() {
+            log('测试存储功能...');
+            if (chrome.storage) {
+                chrome.storage.local.get(['notesData'], (result) => {
+                    log('当前存储数据: ' + JSON.stringify(result));
+                });
+            } else {
+                log('✗ chrome.storage 不可用');
+            }
+        }
+
+        function testMessage() {
+            log('测试消息传递...');
+            if (chrome.runtime) {
+                chrome.runtime.sendMessage({
+                    action: 'test',
+                    data: { message: 'Hello from debug page' }
+                }, (response) => {
+                    log('消息响应: ' + JSON.stringify(response));
+                });
+            } else {
+                log('✗ chrome.runtime 不可用');
+            }
+        }
+
+        function testAddNote() {
+            log('测试添加笔记...');
+            if (chrome.runtime) {
+                chrome.runtime.sendMessage({
+                    action: 'showAddNoteDialog',
+                    data: { 
+                        title: '调试测试笔记',
+                        url: 'https://www.example.com/debug'
+                    }
+                }, (response) => {
+                    log('添加笔记响应: ' + JSON.stringify(response));
+                });
+            } else {
+                log('✗ chrome.runtime 不可用');
+            }
+        }
+
+        function testCreateDomain() {
+            log('测试创建领域...');
+            const domainName = prompt('请输入领域名称:');
+            if (domainName) {
+                if (chrome.storage) {
+                    chrome.storage.local.get(['notesData'], (result) => {
+                        const notesData = result.notesData || {};
+                        notesData[domainName] = [];
+                        chrome.storage.local.set({ notesData: notesData }, () => {
+                            log('✓ 领域创建成功: ' + domainName);
+                        });
+                    });
+                } else {
+                    log('✗ chrome.storage 不可用');
+                }
+            }
+        }
+
+        function testListDomains() {
+            log('测试列出领域...');
+            if (chrome.storage) {
+                chrome.storage.local.get(['notesData'], (result) => {
+                    const notesData = result.notesData || {};
+                    const domains = Object.keys(notesData);
+                    log('当前领域: ' + JSON.stringify(domains));
+                });
+            } else {
+                log('✗ chrome.storage 不可用');
+            }
+        }
+
+        // 页面加载时自动测试
+        window.addEventListener('load', () => {
+            log('页面加载完成，开始自动测试...');
+            testChromeAPI();
+        });
+    </script>
+</body>
+</html>
