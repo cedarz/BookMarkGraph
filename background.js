@@ -60,26 +60,42 @@ class BackgroundScript {
             
             // 清除现有的领域菜单项
             chrome.contextMenus.removeAll(() => {
-                // 重新创建基础菜单
-                this.createContextMenus();
-                
-                // 为每个领域创建二级子菜单项
-                domains.forEach((domain, index) => {
+                try {
+                    // 创建主菜单
                     chrome.contextMenus.create({
-                        id: `domain_${index}`,
-                        parentId: 'addCurrentPage',
-                        title: domain,
+                        id: 'notesManager',
+                        title: '笔记管理器',
                         contexts: ['link', 'page']
                     });
-                });
 
-                // 添加"创建新领域"选项作为一级子菜单
-                chrome.contextMenus.create({
-                    id: 'createDomain',
-                    parentId: 'notesManager',
-                    title: '创建新领域',
-                    contexts: ['link', 'page']
-                });
+                    // 创建一级子菜单
+                    chrome.contextMenus.create({
+                        id: 'addCurrentPage',
+                        parentId: 'notesManager',
+                        title: '添加当前页到',
+                        contexts: ['link', 'page']
+                    });
+                    
+                    // 为每个领域创建二级子菜单项
+                    domains.forEach((domain, index) => {
+                        chrome.contextMenus.create({
+                            id: `domain_${index}`,
+                            parentId: 'addCurrentPage',
+                            title: domain,
+                            contexts: ['link', 'page']
+                        });
+                    });
+
+                    // 添加"创建新领域"选项作为一级子菜单
+                    chrome.contextMenus.create({
+                        id: 'createDomain',
+                        parentId: 'notesManager',
+                        title: '创建新领域',
+                        contexts: ['link', 'page']
+                    });
+                } catch (error) {
+                    console.error('创建菜单项时出错:', error);
+                }
             });
         } catch (error) {
             console.error('更新右键菜单失败:', error);
