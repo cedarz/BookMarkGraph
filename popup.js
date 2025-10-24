@@ -224,8 +224,13 @@ class NotesManager {
     }
 
     bindDomainEvents() {
-        // 事件委托处理动态生成的按钮
-        document.addEventListener('click', (e) => {
+        // 移除旧的事件监听器
+        if (this.domainEventHandler) {
+            document.removeEventListener('click', this.domainEventHandler);
+        }
+        
+        // 创建新的事件处理器
+        this.domainEventHandler = (e) => {
             // 处理删除笔记按钮
             if (e.target.classList.contains('delete-note-btn')) {
                 const domainName = e.target.dataset.domain;
@@ -247,7 +252,10 @@ class NotesManager {
                 const domainName = e.target.dataset.domain;
                 this.deleteDomain(domainName);
             }
-        });
+        };
+        
+        // 添加新的事件监听器
+        document.addEventListener('click', this.domainEventHandler);
     }
 
     showAddNoteForm(domainName) {
