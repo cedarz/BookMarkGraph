@@ -196,7 +196,9 @@ class BackgroundScript {
                     if (chrome.runtime.lastError) {
                         console.log('发送消息到popup失败:', chrome.runtime.lastError.message);
                         // 如果popup不可用，直接添加到第一个领域
-                        this.addNoteToFirstDomain(domains, title, url);
+                        this.addNoteToFirstDomain(domains, title, url).catch(error => {
+                            console.error('添加到第一个领域失败:', error);
+                        });
                     }
                 });
             } else {
@@ -206,15 +208,21 @@ class BackgroundScript {
             console.error('显示fallback对话框时出错:', error);
             // 出错时直接添加到第一个领域
             if (domains.length > 0) {
-                this.addNoteToFirstDomain(domains, title, url);
+                this.addNoteToFirstDomain(domains, title, url).catch(error => {
+                    console.error('添加到第一个领域失败:', error);
+                });
             }
         }
     }
 
     async addNoteToFirstDomain(domains, title, url) {
-        if (domains.length > 0) {
-            const firstDomain = domains[0];
-            await this.addNoteToDomain(firstDomain, title, url);
+        try {
+            if (domains.length > 0) {
+                const firstDomain = domains[0];
+                await this.addNoteToDomain(firstDomain, title, url);
+            }
+        } catch (error) {
+            console.error('添加到第一个领域失败:', error);
         }
     }
 
@@ -236,10 +244,18 @@ class BackgroundScript {
             await chrome.storage.local.set({ notesData: notesData });
             
             // 显示成功提示
-            this.showNotification('笔记添加成功！', `已添加到领域: ${domainName}`);
+            try {
+                this.showNotification('笔记添加成功！', `已添加到领域: ${domainName}`);
+            } catch (notificationError) {
+                console.log('显示成功通知失败:', notificationError);
+            }
         } catch (error) {
             console.error('添加笔记失败:', error);
-            this.showNotification('添加失败', '请重试');
+            try {
+                this.showNotification('添加失败', '请重试');
+            } catch (notificationError) {
+                console.log('显示错误通知失败:', notificationError);
+            }
         }
     }
 
