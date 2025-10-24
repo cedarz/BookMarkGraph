@@ -319,29 +319,13 @@ class ContentScript {
             return this.getDomainName(url);
         }
         
-        // 移除标题中的网址信息
         let cleanTitle = title.trim();
         
-        // 移除常见的网址模式
-        cleanTitle = cleanTitle.replace(/https?:\/\/[^\s]+/g, '');
-        cleanTitle = cleanTitle.replace(/www\.[^\s]+/g, '');
-        cleanTitle = cleanTitle.replace(/[^\s]+\.[a-z]{2,}\/[^\s]*/g, '');
-        
-        // 移除更复杂的网址模式
-        cleanTitle = cleanTitle.replace(/[^\s]+\.[a-z]{2,}\s*›\s*[^\s]*/g, '');
-        cleanTitle = cleanTitle.replace(/[^\s]+\.[a-z]{2,}\s*›\s*[^\s]*\s*›\s*[^\s]*/g, '');
-        cleanTitle = cleanTitle.replace(/[^\s]+\.[a-z]{2,}\s*›\s*[^\s]*\s*›\s*[^\s]*\s*›\s*[^\s]*/g, '');
-        
-        // 移除包含"..."的网址片段
-        cleanTitle = cleanTitle.replace(/[^\s]+\.[a-z]{2,}\s*›\s*[^\s]*\.\.\./g, '');
-        
-        // 移除大学/机构名称后的网址信息
-        cleanTitle = cleanTitle.replace(/(University|College|Institute|School)\s*›\s*[^\s]*/g, '');
-        cleanTitle = cleanTitle.replace(/(University|College|Institute|School)\s*›\s*[^\s]*\s*›\s*[^\s]*/g, '');
-        
-        // 移除多余的空格和特殊字符
-        cleanTitle = cleanTitle.replace(/\s+/g, ' ').trim();
-        cleanTitle = cleanTitle.replace(/[›»]/g, '').trim();
+        // 直接截取到http网址之前的内容
+        const httpIndex = cleanTitle.indexOf('http');
+        if (httpIndex !== -1) {
+            cleanTitle = cleanTitle.substring(0, httpIndex).trim();
+        }
         
         // 如果清理后为空，使用网站名
         if (!cleanTitle) {
