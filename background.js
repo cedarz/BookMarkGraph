@@ -129,12 +129,20 @@ class BackgroundScript {
     }
 
     showFallbackDialog(domains, title, url) {
-        const domainList = domains.map((domain, index) => `${index + 1}. ${domain}`).join('\n');
-        const choice = prompt(`选择要添加到的领域:\n${domainList}\n\n请输入数字 (1-${domains.length}):`);
-        
-        const index = parseInt(choice) - 1;
-        if (index >= 0 && index < domains.length) {
-            this.addNoteToDomain(domains[index], title, url);
+        try {
+            const domainList = domains.map((domain, index) => `${index + 1}. ${domain}`).join('\n');
+            const choice = prompt(`选择要添加到的领域:\n${domainList}\n\n请输入数字 (1-${domains.length}):`);
+            
+            if (choice !== null) {
+                const index = parseInt(choice) - 1;
+                if (index >= 0 && index < domains.length) {
+                    this.addNoteToDomain(domains[index], title, url);
+                } else {
+                    console.log('无效的选择');
+                }
+            }
+        } catch (error) {
+            console.error('显示fallback对话框时出错:', error);
         }
     }
 
@@ -192,17 +200,18 @@ class BackgroundScript {
     }
 
     showNotification(title, message) {
-        // 创建通知
-        if (chrome.notifications) {
-            chrome.notifications.create({
-                type: 'basic',
-                iconUrl: 'icons/icon48.png',
+        // 使用console.log记录，避免通知权限问题
+        console.log(`${title}: ${message}`);
+        
+        // 尝试发送消息到popup显示通知
+        try {
+            chrome.runtime.sendMessage({
+                action: 'showNotification',
                 title: title,
                 message: message
             });
-        } else {
-            // 如果没有通知权限，使用alert
-            alert(`${title}: ${message}`);
+        } catch (error) {
+            console.log('无法发送通知消息:', error);
         }
     }
 }
