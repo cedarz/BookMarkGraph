@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "笔记管理器",
+    "name": "BookMarkGraph",
   "version": "1.0",
   "description": "一个用于组织和管理笔记链接的浏览器插件",
   "permissions": [
@@ -15,7 +15,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "笔记管理器"
+        "default_title": "BookMarkGraph"
   },
   "content_scripts": [
     {

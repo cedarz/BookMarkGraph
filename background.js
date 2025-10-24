@@ -23,7 +23,7 @@ class BackgroundScript {
                 // 创建主菜单
                 chrome.contextMenus.create({
                     id: 'notesManager',
-                    title: '笔记管理器',
+                    title: 'BookMarkGraph',
                     contexts: ['link', 'page']
                 });
 

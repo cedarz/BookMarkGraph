@@ -1,4 +1,4 @@
-# 笔记管理器 Chrome/Edge 插件
+# BookMarkGraph Chrome/Edge 插件
 
 一个用于组织和管理笔记链接的浏览器插件，支持按领域分类管理笔记。
 
