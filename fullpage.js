@@ -166,6 +166,7 @@ class FullPageNotesManager {
                     <a href="${note.url}" target="_blank" class="note-link">
                         ${note.title}
                     </a>
+                    <div class="note-domain">${this.getDomainName(note.url)}</div>
                 </div>
                 <button class="note-delete delete-note-btn" data-domain="${domainName}" data-note-index="${index}">×</button>
             </div>
@@ -201,6 +202,16 @@ class FullPageNotesManager {
             return firstChar;
         } catch {
             return '📄';
+        }
+    }
+
+    getDomainName(url) {
+        try {
+            const domain = new URL(url).hostname;
+            // 移除www前缀
+            return domain.replace(/^www\./, '');
+        } catch {
+            return '未知网站';
         }
     }
 

@@ -160,6 +160,15 @@ body {
     text-decoration: underline;
 }
 
+.note-domain {
+    color: #666;
+    font-size: 11px;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .note-delete {
     opacity: 0;
     transition: opacity 0.2s ease;
