@@ -75,16 +75,30 @@ class BackgroundScript {
             }
             
             if (tabs[0]) {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'showCreateDomainDialog',
-                    data: { title, url }
-                }, (response) => {
-                    if (chrome.runtime.lastError) {
-                        console.error('发送消息时出错:', chrome.runtime.lastError);
-                    }
-                });
+                try {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'showCreateDomainDialog',
+                        data: { title, url }
+                    }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            console.error('发送消息时出错:', chrome.runtime.lastError);
+                            // 如果content script没有响应，直接显示对话框
+                            this.showCreateDomainFallback(title, url);
+                        }
+                    });
+                } catch (error) {
+                    console.error('发送消息异常:', error);
+                    this.showCreateDomainFallback(title, url);
+                }
             }
         });
+    }
+
+    showCreateDomainFallback(title, url) {
+        const domainName = prompt('请先创建一个领域名称:');
+        if (domainName && domainName.trim()) {
+            this.addNoteToDomain(domainName.trim(), title, url);
+        }
     }
 
     showSelectDomainDialog(domains, title, url) {
@@ -95,16 +109,33 @@ class BackgroundScript {
             }
             
             if (tabs[0]) {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'showSelectDomainDialog',
-                    data: { domains, title, url }
-                }, (response) => {
-                    if (chrome.runtime.lastError) {
-                        console.error('发送消息时出错:', chrome.runtime.lastError);
-                    }
-                });
+                try {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'showSelectDomainDialog',
+                        data: { domains, title, url }
+                    }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            console.error('发送消息时出错:', chrome.runtime.lastError);
+                            // 如果content script没有响应，直接显示对话框
+                            this.showFallbackDialog(domains, title, url);
+                        }
+                    });
+                } catch (error) {
+                    console.error('发送消息异常:', error);
+                    this.showFallbackDialog(domains, title, url);
+                }
             }
         });
+    }
+
+    showFallbackDialog(domains, title, url) {
+        const domainList = domains.map((domain, index) => `${index + 1}. ${domain}`).join('\n');
+        const choice = prompt(`选择要添加到的领域:\n${domainList}\n\n请输入数字 (1-${domains.length}):`);
+        
+        const index = parseInt(choice) - 1;
+        if (index >= 0 && index < domains.length) {
+            this.addNoteToDomain(domains[index], title, url);
+        }
     }
 
     async addNoteToDomain(domainName, title, url) {
