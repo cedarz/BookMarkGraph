@@ -22,8 +22,16 @@ class BackgroundScript {
             try {
                 // 创建主菜单
                 chrome.contextMenus.create({
-                    id: 'addToNotes',
+                    id: 'notesManager',
                     title: '笔记管理器',
+                    contexts: ['link', 'page']
+                });
+
+                // 创建一级子菜单
+                chrome.contextMenus.create({
+                    id: 'addCurrentPage',
+                    parentId: 'notesManager',
+                    title: '添加当前页到',
                     contexts: ['link', 'page']
                 });
 
@@ -55,20 +63,20 @@ class BackgroundScript {
                 // 重新创建基础菜单
                 this.createContextMenus();
                 
-                // 为每个领域创建菜单项
+                // 为每个领域创建二级子菜单项
                 domains.forEach((domain, index) => {
                     chrome.contextMenus.create({
                         id: `domain_${index}`,
-                        parentId: 'addToNotes',
+                        parentId: 'addCurrentPage',
                         title: domain,
                         contexts: ['link', 'page']
                     });
                 });
 
-                // 添加"创建新领域"选项
+                // 添加"创建新领域"选项作为一级子菜单
                 chrome.contextMenus.create({
                     id: 'createDomain',
-                    parentId: 'addToNotes',
+                    parentId: 'notesManager',
                     title: '创建新领域',
                     contexts: ['link', 'page']
                 });
