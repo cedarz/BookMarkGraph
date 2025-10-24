@@ -285,8 +285,11 @@ class ContentScript {
                 notesData[domainName] = [];
             }
             
+            // 清理标题，移除网址信息
+            const cleanTitle = this.cleanTitle(title, url);
+            
             notesData[domainName].push({
-                title: title,
+                title: cleanTitle,
                 url: url,
                 timestamp: Date.now()
             });
@@ -299,6 +302,40 @@ class ContentScript {
             console.error('添加笔记失败:', error);
             alert('添加失败，请重试');
         }
+    }
+
+    getDomainName(url) {
+        try {
+            const domain = new URL(url).hostname;
+            // 移除www前缀
+            return domain.replace(/^www\./, '');
+        } catch {
+            return '未知网站';
+        }
+    }
+
+    cleanTitle(title, url) {
+        if (!title || title.trim() === '') {
+            return this.getDomainName(url);
+        }
+        
+        // 移除标题中的网址信息
+        let cleanTitle = title.trim();
+        
+        // 移除常见的网址模式
+        cleanTitle = cleanTitle.replace(/https?:\/\/[^\s]+/g, '');
+        cleanTitle = cleanTitle.replace(/www\.[^\s]+/g, '');
+        cleanTitle = cleanTitle.replace(/[^\s]+\.[a-z]{2,}\/[^\s]*/g, '');
+        
+        // 移除多余的空格
+        cleanTitle = cleanTitle.replace(/\s+/g, ' ').trim();
+        
+        // 如果清理后为空，使用网站名
+        if (!cleanTitle) {
+            return this.getDomainName(url);
+        }
+        
+        return cleanTitle;
     }
 }
 
