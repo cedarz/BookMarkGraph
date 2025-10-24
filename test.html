@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拖拽测试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .test-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .test-links a {
+            display: block;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #007bff;
+            transition: all 0.2s ease;
+        }
+        .test-links a:hover {
+            background: #007bff;
+            color: white;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .instructions h4 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 笔记管理器拖拽测试页面</h1>
+    
+    <div class="instructions">
+        <h4>📋 测试说明</h4>
+        <p>这个页面用于测试笔记管理器的拖拽功能。请尝试以下操作：</p>
+        <ul>
+            <li><strong>长按拖拽测试</strong>: 长按链接500ms后拖拽到浏览器左上角区域</li>
+            <li><strong>双击测试</strong>: 双击下面的链接</li>
+            <li><strong>右键测试</strong>: 右键点击链接选择"添加到笔记"</li>
+        </ul>
+        <p><strong>注意</strong>: 长按拖拽需要按住鼠标500ms后才会开始拖拽模式</p>
+    </div>
+
+    <div class="test-section">
+        <h3>🔗 测试链接</h3>
+        <div class="test-links">
+            <a href="https://www.google.com" target="_blank">Google 搜索</a>
+            <a href="https://github.com" target="_blank">GitHub</a>
+            <a href="https://stackoverflow.com" target="_blank">Stack Overflow</a>
+            <a href="https://developer.mozilla.org" target="_blank">MDN Web Docs</a>
+            <a href="https://www.w3schools.com" target="_blank">W3Schools</a>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>📝 搜索结果模拟</h3>
+        <div class="test-links">
+            <a href="https://www.example.com/search-result-1" target="_blank">搜索结果 1 - 如何学习JavaScript</a>
+            <a href="https://www.example.com/search-result-2" target="_blank">搜索结果 2 - React开发指南</a>
+            <a href="https://www.example.com/search-result-3" target="_blank">搜索结果 3 - CSS布局技巧</a>
+            <a href="https://www.example.com/search-result-4" target="_blank">搜索结果 4 - Node.js最佳实践</a>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>🎯 测试步骤</h3>
+        <ol>
+            <li>确保笔记管理器插件已安装并启用</li>
+            <li>打开插件管理界面，创建一个测试领域（如"测试资料"）</li>
+            <li>尝试长按上面的链接500ms后拖拽到浏览器左上角</li>
+            <li>尝试双击链接</li>
+            <li>尝试右键点击链接</li>
+            <li>检查插件界面是否成功添加了笔记</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h3>🔧 快速测试</h3>
+        <p>如果拖拽不工作，可以尝试以下方法：</p>
+        <ul>
+            <li><strong>双击链接</strong> - 最简单的方法</li>
+            <li><strong>右键菜单</strong> - 最可靠的方法</li>
+            <li><strong>插件界面</strong> - 手动添加笔记</li>
+        </ul>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 6px;">
+            <h4>🧪 直接测试</h4>
+            <button id="testAddNote" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                测试添加笔记
+            </button>
+            <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                点击此按钮直接测试添加笔记功能
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 添加一些交互提示
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('a');
+            links.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.cursor = 'grab';
+                });
+                link.addEventListener('mousedown', function() {
+                    this.style.cursor = 'grabbing';
+                });
+            });
+
+            // 测试按钮事件
+            document.getElementById('testAddNote').addEventListener('click', function() {
+                console.log('测试添加笔记按钮被点击');
+                
+                // 模拟添加笔记
+                const testData = {
+                    title: '测试笔记',
+                    url: 'https://www.example.com/test'
+                };
+                
+                // 发送消息到background script
+                if (typeof chrome !== 'undefined' && chrome.runtime) {
+                    chrome.runtime.sendMessage({
+                        action: 'showAddNoteDialog',
+                        data: testData
+                    }, (response) => {
+                        console.log('测试响应:', response);
+                    });
+                } else {
+                    alert('Chrome扩展API不可用，请确保插件已正确安装');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

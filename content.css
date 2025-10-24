@@ -1,0 +1,53 @@
+/* Content Script 样式 */
+.drag-indicator {
+    position: fixed;
+    background: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 10000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 拖拽时的链接样式 */
+a[draggable="true"] {
+    cursor: grab !important;
+}
+
+a[draggable="true"]:active {
+    cursor: grabbing !important;
+}
+
+/* 搜索结果高亮 */
+.search-result-draggable {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.search-result-draggable:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* 拖拽提示 */
+.drag-hint {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 123, 255, 0.9);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 10001;
+    pointer-events: none;
+    animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}

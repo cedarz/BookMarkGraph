@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "笔记管理器",
+  "version": "1.0",
+  "description": "一个用于组织和管理笔记链接的浏览器插件",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "笔记管理器"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

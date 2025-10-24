@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记管理器</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📝 笔记管理器</h1>
+            <button id="addDomain" class="btn btn-primary">+ 添加领域</button>
+        </header>
+        
+        <div class="domains-container" id="domainsContainer">
+            <!-- 领域列表将在这里动态生成 -->
+        </div>
+        
+        <div class="add-domain-form" id="addDomainForm">
+            <input type="text" id="domainName" placeholder="输入领域名称" class="input">
+            <div class="form-actions">
+                <button id="saveDomain" class="btn btn-primary">保存</button>
+                <button id="cancelDomain" class="btn btn-secondary">取消</button>
+            </div>
+        </div>
+        
+        <div class="debug-section" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; border: 1px solid #dee2e6;">
+            <h4 style="margin: 0 0 10px 0; color: #495057;">🔧 调试功能</h4>
+            <button id="testAddNote" class="btn btn-primary" style="margin-right: 10px;">测试添加笔记</button>
+            <button id="testStorage" class="btn btn-secondary">测试存储</button>
+            <div id="debugLog" style="margin-top: 10px; padding: 8px; background: white; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 100px; overflow-y: auto; display: none;"></div>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
