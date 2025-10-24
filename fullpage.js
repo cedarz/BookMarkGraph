@@ -1,5 +1,5 @@
-// 笔记管理器主逻辑
-class NotesManager {
+// 完整页面笔记管理器
+class FullPageNotesManager {
     constructor() {
         this.domains = {};
         this.init();
@@ -52,11 +52,6 @@ class NotesManager {
 
         document.getElementById('testStorage').addEventListener('click', () => {
             this.testStorage();
-        });
-
-        // 打开完整页面
-        document.getElementById('openFullPage').addEventListener('click', () => {
-            this.openFullPage();
         });
 
         // 导出导入功能
@@ -131,15 +126,18 @@ class NotesManager {
     renderDomains() {
         const container = document.getElementById('domainsContainer');
         const totalNotesElement = document.getElementById('totalNotes');
+        const totalDomainsElement = document.getElementById('totalDomains');
         
-        // 计算总笔记数
+        // 计算总笔记数和领域数
         let totalNotes = 0;
         for (const notes of Object.values(this.domains)) {
             totalNotes += notes.length;
         }
+        const totalDomains = Object.keys(this.domains).length;
         
-        // 更新总笔记数
+        // 更新统计信息
         totalNotesElement.textContent = `${totalNotes} 条笔记`;
+        totalDomainsElement.textContent = `${totalDomains} 个领域`;
         
         if (Object.keys(this.domains).length === 0) {
             container.innerHTML = `
@@ -174,7 +172,7 @@ class NotesManager {
         `).join('');
 
         return `
-            <div class="domain-section" data-domain="${domainName}">
+            <div class="domain-card" data-domain="${domainName}">
                 <div class="domain-header">
                     <div class="domain-name">${domainName}</div>
                     <div class="domain-stats">${notes.length} 条笔记</div>
@@ -253,9 +251,6 @@ class NotesManager {
         this.debugLog('添加测试笔记: ' + testTitle);
         this.addNote('测试领域', testTitle, testUrl);
         this.debugLog('测试完成！');
-        
-        // 重新渲染界面
-        this.renderDomains();
     }
 
     testStorage() {
@@ -275,13 +270,6 @@ class NotesManager {
         logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
         logDiv.scrollTop = logDiv.scrollHeight;
         console.log(message);
-    }
-
-    // 打开完整页面
-    openFullPage() {
-        chrome.tabs.create({
-            url: chrome.runtime.getURL('fullpage.html')
-        });
     }
 
     // 导出数据
@@ -336,5 +324,5 @@ class NotesManager {
     }
 }
 
-// 初始化笔记管理器
-const notesManager = new NotesManager();
+// 初始化完整页面笔记管理器
+const fullPageNotesManager = new FullPageNotesManager();

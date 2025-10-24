@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>笔记管理器</title>
-    <link rel="stylesheet" href="popup.css">
+    <title>笔记管理器 - 完整页面</title>
+    <link rel="stylesheet" href="fullpage.css">
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>笔记管理器</h1>
-            <div class="header-info">
-                <div class="tab-count" id="totalNotes">0 条笔记</div>
+            <div class="header-content">
+                <h1>📝 笔记管理器</h1>
                 <div class="header-actions">
-                    <a href="#" id="addDomain">+ 添加领域</a>
-                    <a href="#" id="openFullPage">打开完整页面</a>
-                    <a href="#" id="exportData">导出数据</a>
-                    <a href="#" id="importData">导入数据</a>
+                    <button id="addDomain" class="btn btn-primary">+ 添加领域</button>
+                    <button id="exportData" class="btn btn-secondary">导出数据</button>
+                    <button id="importData" class="btn btn-secondary">导入数据</button>
                 </div>
+            </div>
+            <div class="header-stats">
+                <span id="totalNotes">0 条笔记</span>
+                <span id="totalDomains">0 个领域</span>
             </div>
         </header>
         
@@ -41,6 +43,6 @@
         </div>
     </div>
     
-    <script src="popup.js"></script>
+    <script src="fullpage.js"></script>
 </body>
 </html>
