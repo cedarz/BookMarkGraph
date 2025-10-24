@@ -95,10 +95,10 @@ class BackgroundScript {
     }
 
     showCreateDomainFallback(title, url) {
-        const domainName = prompt('请先创建一个领域名称:');
-        if (domainName && domainName.trim()) {
-            this.addNoteToDomain(domainName.trim(), title, url);
-        }
+        // background script无法使用prompt，使用默认领域名
+        const domainName = '默认领域';
+        console.log('使用默认领域:', domainName);
+        this.addNoteToDomain(domainName, title, url);
     }
 
     showSelectDomainDialog(domains, title, url) {
@@ -130,16 +130,12 @@ class BackgroundScript {
 
     showFallbackDialog(domains, title, url) {
         try {
-            const domainList = domains.map((domain, index) => `${index + 1}. ${domain}`).join('\n');
-            const choice = prompt(`选择要添加到的领域:\n${domainList}\n\n请输入数字 (1-${domains.length}):`);
-            
-            if (choice !== null) {
-                const index = parseInt(choice) - 1;
-                if (index >= 0 && index < domains.length) {
-                    this.addNoteToDomain(domains[index], title, url);
-                } else {
-                    console.log('无效的选择');
-                }
+            // background script无法使用prompt，直接添加到第一个领域
+            if (domains.length > 0) {
+                console.log('自动添加到第一个领域:', domains[0]);
+                this.addNoteToDomain(domains[0], title, url);
+            } else {
+                console.log('没有可用的领域');
             }
         } catch (error) {
             console.error('显示fallback对话框时出错:', error);
