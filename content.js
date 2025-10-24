@@ -35,18 +35,18 @@ class ContentScript {
             }
         });
 
-        document.addEventListener('mouseup', (e) => {
+        document.addEventListener('mouseup', async (e) => {
             this.cancelLongPress();
             if (this.isDragging) {
-                this.endDrag(e);
+                await this.endDrag(e);
             }
         });
 
         // 添加双击添加功能作为备选方案
-        document.addEventListener('dblclick', (e) => {
+        document.addEventListener('dblclick', async (e) => {
             const link = e.target.tagName === 'A' ? e.target : e.target.closest('a');
             if (link && link.href) {
-                this.showAddNoteDialog(link);
+                await this.showAddNoteDialog(link);
             }
         });
     }
@@ -169,7 +169,7 @@ class ContentScript {
         }
     }
 
-    endDrag(e) {
+    async endDrag(e) {
         // 重置状态
         this.isDragging = false;
         this.dragStartTime = 0;
@@ -189,7 +189,7 @@ class ContentScript {
 
         // 检查是否拖拽到左上角区域
         if (e.clientX < 150 && e.clientY < 150) {
-            this.showAddNoteDialog();
+            await this.showAddNoteDialog();
         }
 
         this.dragElement = null;
@@ -213,7 +213,7 @@ class ContentScript {
         document.body.appendChild(indicator);
     }
 
-    showAddNoteDialog(link = null) {
+    async showAddNoteDialog(link = null) {
         const targetLink = link || this.dragElement;
         if (!targetLink) return;
 
@@ -222,7 +222,7 @@ class ContentScript {
         const rawTitle = targetLink.textContent.trim() || targetLink.title || '';
         
         // 解析标题和网站名
-        const { title, siteName } = this.parseLinkInfo(rawTitle, url);
+        const { title, siteName } = await this.parseLinkInfo(rawTitle, url);
 
         console.log('解析的链接信息:', { title, siteName, url });
 
@@ -247,15 +247,36 @@ class ContentScript {
         }
     }
 
-    parseLinkInfo(rawTitle, url) {
+    async parseLinkInfo(rawTitle, url) {
         let title = rawTitle;
         let siteName = this.getDomainName(url);
         
-        // 尝试从网页的title标签获取标题
-        const pageTitle = document.title;
-        if (pageTitle && pageTitle.trim()) {
-            title = pageTitle.trim();
-            console.log('使用网页title标签:', title);
+        try {
+            // 通过fetch获取网页内容并解析title
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                }
+            });
+            
+            if (response.ok) {
+                const html = await response.text();
+                const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i);
+                if (titleMatch && titleMatch[1]) {
+                    title = titleMatch[1].trim();
+                    console.log('从URL获取的title:', title);
+                }
+            }
+        } catch (error) {
+            console.log('无法获取URL的title，使用备用方案:', error.message);
+            // 如果fetch失败，使用当前页面的title作为备用
+            const pageTitle = document.title;
+            if (pageTitle && pageTitle.trim()) {
+                title = pageTitle.trim();
+                console.log('使用当前页面title作为备用:', title);
+            }
         }
         
         // 如果标题包含网址信息，进行清理
