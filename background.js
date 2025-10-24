@@ -5,10 +5,10 @@ class BackgroundScript {
         this.init();
     }
 
-    init() {
+    async init() {
         this.createContextMenus();
         this.setupMessageListener();
-        this.updateContextMenus();
+        await this.updateContextMenus();
     }
 
     createContextMenus() {
@@ -56,7 +56,13 @@ class BackgroundScript {
         try {
             // 获取所有领域
             const result = await chrome.storage.local.get(['notesData']);
-            const domains = Object.keys(result.notesData || {});
+            let domains = Object.keys(result.notesData || {});
+            
+            // 如果没有领域，创建默认领域
+            if (domains.length === 0) {
+                await this.createDefaultDomain();
+                domains = ['默认领域'];
+            }
             
             // 清除现有的领域菜单项
             chrome.contextMenus.removeAll(() => {
@@ -102,6 +108,21 @@ class BackgroundScript {
         }
     }
 
+    async createDefaultDomain() {
+        try {
+            // 创建默认领域
+            const result = await chrome.storage.local.get(['notesData']);
+            const notesData = result.notesData || {};
+            
+            if (!notesData['默认领域']) {
+                notesData['默认领域'] = [];
+                await chrome.storage.local.set({ notesData });
+                console.log('已创建默认领域');
+            }
+        } catch (error) {
+            console.error('创建默认领域失败:', error);
+        }
+    }
 
     async handleCreateDomain(info, tab) {
         let title, url;
