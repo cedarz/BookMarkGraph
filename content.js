@@ -271,20 +271,20 @@ class ContentScript {
 
     showCreateDomainDialog(data) {
         const { title, url } = data;
-        const domainName = prompt('请先创建一个领域名称:');
-        if (domainName && domainName.trim()) {
-            this.addNoteToDomain(domainName.trim(), title, url);
-        }
+        // 使用默认领域名，避免prompt调用
+        const domainName = '默认领域';
+        console.log('使用默认领域:', domainName);
+        this.addNoteToDomain(domainName, title, url);
     }
 
     showSelectDomainDialog(data) {
         const { domains, title, url } = data;
-        const domainList = domains.map((domain, index) => `${index + 1}. ${domain}`).join('\n');
-        const choice = prompt(`选择要添加到的领域:\n${domainList}\n\n请输入数字 (1-${domains.length}):`);
-        
-        const index = parseInt(choice) - 1;
-        if (index >= 0 && index < domains.length) {
-            this.addNoteToDomain(domains[index], title, url);
+        // 自动选择第一个领域，避免prompt调用
+        if (domains.length > 0) {
+            console.log('自动选择第一个领域:', domains[0]);
+            this.addNoteToDomain(domains[0], title, url);
+        } else {
+            console.log('没有可用的领域');
         }
     }
 
