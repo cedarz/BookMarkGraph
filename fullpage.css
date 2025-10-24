@@ -86,6 +86,14 @@ body {
     border-left: 4px solid #0066cc;
 }
 
+.search-highlight {
+    background-color: #ffeb3b;
+    color: #333;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
 .search-results-header h3 {
     color: #0066cc;
     margin-bottom: 5px;

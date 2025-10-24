@@ -162,15 +162,15 @@ class FullPageNotesManager {
         this.bindDomainEvents();
     }
 
-    renderDomainCard(domainName, notes) {
+    renderDomainCard(domainName, notes, searchTerm = '') {
         const notesHtml = notes.map((note, index) => `
             <div class="note-item" data-domain="${domainName}" data-note-index="${index}">
                 <div class="note-icon">${this.getFavicon(note.url)}</div>
                 <div class="note-content">
                     <a href="${note.url}" target="_blank" class="note-link">
-                        ${note.title}
+                        ${searchTerm ? this.highlightText(note.title, searchTerm) : note.title}
                     </a>
-                    <div class="note-domain">${this.getDomainName(note.url)}</div>
+                    <div class="note-domain">${searchTerm ? this.highlightText(this.getDomainName(note.url), searchTerm) : this.getDomainName(note.url)}</div>
                 </div>
                 <button class="note-delete delete-note-btn" data-domain="${domainName}" data-note-index="${index}">×</button>
             </div>
@@ -446,7 +446,7 @@ class FullPageNotesManager {
 
         for (const result of results) {
             console.log('渲染搜索结果:', result);
-            html += this.renderDomainCard(result.domainName, result.notes);
+            html += this.renderDomainCard(result.domainName, result.notes, keyword);
         }
         
         console.log('最终HTML:', html);
@@ -478,6 +478,13 @@ class FullPageNotesManager {
         } else {
             console.error('未找到清除按钮');
         }
+    }
+
+    highlightText(text, searchTerm) {
+        if (!searchTerm || !text) return text;
+        
+        const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<mark class="search-highlight">$1</mark>');
     }
 }
 
