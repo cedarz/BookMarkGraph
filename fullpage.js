@@ -8,6 +8,7 @@ class FullPageNotesManager {
     async init() {
         await this.loadData();
         this.bindEvents();
+        this.bindSearchEvents();
         this.renderDomains();
     }
 
@@ -374,6 +375,79 @@ class FullPageNotesManager {
             }
         };
         input.click();
+    }
+
+    // 搜索功能
+    searchNotes(keyword) {
+        if (!keyword || keyword.trim() === '') {
+            this.renderDomains();
+            return;
+        }
+
+        const results = [];
+        const searchTerm = keyword.toLowerCase().trim();
+
+        for (const [domainName, notes] of Object.entries(this.domains)) {
+            const matchingNotes = notes.filter(note => 
+                note.title.toLowerCase().includes(searchTerm) ||
+                note.url.toLowerCase().includes(searchTerm) ||
+                this.getDomainName(note.url).toLowerCase().includes(searchTerm)
+            );
+
+            if (matchingNotes.length > 0) {
+                results.push({
+                    domainName,
+                    notes: matchingNotes,
+                    isSearchResult: true
+                });
+            }
+        }
+
+        this.renderSearchResults(results, keyword);
+    }
+
+    renderSearchResults(results, keyword) {
+        const container = document.getElementById('domainsContainer');
+        
+        if (results.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>未找到匹配的笔记</h3>
+                    <p>搜索关键词: "${keyword}"</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = `<div class="search-results-header">
+            <h3>搜索结果 (${results.length} 个领域)</h3>
+            <p>搜索关键词: "${keyword}"</p>
+        </div>`;
+
+        for (const result of results) {
+            html += this.renderDomainCard(result.domainName, result.notes, true);
+        }
+        
+        container.innerHTML = html;
+        this.bindDomainEvents();
+    }
+
+    bindSearchEvents() {
+        const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearSearch');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.searchNotes(e.target.value);
+            });
+        }
+
+        if (clearSearch) {
+            clearSearch.addEventListener('click', () => {
+                searchInput.value = '';
+                this.renderDomains();
+            });
+        }
     }
 }
 

@@ -52,6 +52,50 @@ body {
     color: #666;
 }
 
+.search-section {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.search-results-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #0066cc;
+}
+
+.search-results-header h3 {
+    color: #0066cc;
+    margin-bottom: 5px;
+}
+
+.search-results-header p {
+    color: #666;
+    font-size: 14px;
+}
+
 .domains-container {
     display: flex;
     flex-direction: column;
