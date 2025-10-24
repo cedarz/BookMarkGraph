@@ -118,8 +118,11 @@ class NotesManager {
             this.domains[domainName] = [];
         }
         
+        // 如果没有提供标题，使用网站名作为默认标题
+        const defaultTitle = title || this.getDomainName(url);
+        
         this.domains[domainName].push({
-            title: title || url,
+            title: defaultTitle,
             url: url,
             timestamp: Date.now()
         });
