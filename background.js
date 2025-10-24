@@ -191,12 +191,30 @@ class BackgroundScript {
                 chrome.runtime.sendMessage({
                     action: 'showDomainSelector',
                     data: { domains, title, url }
+                }, (response) => {
+                    // 处理响应或错误
+                    if (chrome.runtime.lastError) {
+                        console.log('发送消息到popup失败:', chrome.runtime.lastError.message);
+                        // 如果popup不可用，直接添加到第一个领域
+                        this.addNoteToFirstDomain(domains, title, url);
+                    }
                 });
             } else {
                 console.log('没有可用的领域');
             }
         } catch (error) {
             console.error('显示fallback对话框时出错:', error);
+            // 出错时直接添加到第一个领域
+            if (domains.length > 0) {
+                this.addNoteToFirstDomain(domains, title, url);
+            }
+        }
+    }
+
+    async addNoteToFirstDomain(domains, title, url) {
+        if (domains.length > 0) {
+            const firstDomain = domains[0];
+            await this.addNoteToDomain(firstDomain, title, url);
         }
     }
 
@@ -265,6 +283,10 @@ class BackgroundScript {
                 action: 'showNotification',
                 title: title,
                 message: message
+            }, (response) => {
+                if (chrome.runtime.lastError) {
+                    console.log('发送通知消息失败:', chrome.runtime.lastError.message);
+                }
             });
         } catch (error) {
             console.log('无法发送通知消息:', error);
