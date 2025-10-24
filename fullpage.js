@@ -423,9 +423,12 @@ class FullPageNotesManager {
     }
 
     renderSearchResults(results, keyword) {
+        console.log('renderSearchResults 被调用:', { results, keyword });
         const container = document.getElementById('domainsContainer');
+        console.log('容器元素:', container);
         
         if (results.length === 0) {
+            console.log('没有搜索结果，显示空状态');
             container.innerHTML = `
                 <div class="empty-state">
                     <h3>未找到匹配的笔记</h3>
@@ -435,15 +438,18 @@ class FullPageNotesManager {
             return;
         }
 
+        console.log(`渲染 ${results.length} 个搜索结果`);
         let html = `<div class="search-results-header">
             <h3>搜索结果 (${results.length} 个领域)</h3>
             <p>搜索关键词: "${keyword}"</p>
         </div>`;
 
         for (const result of results) {
-            html += this.renderDomainCard(result.domainName, result.notes, true);
+            console.log('渲染搜索结果:', result);
+            html += this.renderDomainCard(result.domainName, result.notes);
         }
         
+        console.log('最终HTML:', html);
         container.innerHTML = html;
         this.bindDomainEvents();
     }
