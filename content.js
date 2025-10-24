@@ -271,20 +271,26 @@ class ContentScript {
 
     showCreateDomainDialog(data) {
         const { title, url } = data;
-        // 使用默认领域名，避免prompt调用
-        const domainName = '默认领域';
-        console.log('使用默认领域:', domainName);
-        this.addNoteToDomain(domainName, title, url);
+        // 创建一个简单的输入框来获取领域名
+        const domainName = window.prompt('请先创建一个领域名称:');
+        if (domainName && domainName.trim()) {
+            this.addNoteToDomain(domainName.trim(), title, url);
+        }
     }
 
     showSelectDomainDialog(data) {
         const { domains, title, url } = data;
-        // 自动选择第一个领域，避免prompt调用
-        if (domains.length > 0) {
-            console.log('自动选择第一个领域:', domains[0]);
-            this.addNoteToDomain(domains[0], title, url);
-        } else {
-            console.log('没有可用的领域');
+        // 创建领域选择对话框
+        const domainList = domains.map((domain, index) => `${index + 1}. ${domain}`).join('\n');
+        const choice = window.prompt(`选择要添加到的领域:\n${domainList}\n\n请输入数字 (1-${domains.length}):`);
+        
+        if (choice !== null) {
+            const index = parseInt(choice) - 1;
+            if (index >= 0 && index < domains.length) {
+                this.addNoteToDomain(domains[index], title, url);
+            } else {
+                console.log('无效的选择');
+            }
         }
     }
 
@@ -333,10 +339,20 @@ class ContentScript {
         
         let cleanTitle = title.trim();
         
-        // 直接截取到http网址之前的内容
+        // 直接截取到http/https网址之前的内容
         const httpIndex = cleanTitle.indexOf('http');
         if (httpIndex !== -1) {
             cleanTitle = cleanTitle.substring(0, httpIndex).trim();
+        }
+        
+        // 也检查是否有其他网址模式
+        const domainPattern = /[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/;
+        const domainMatch = cleanTitle.match(domainPattern);
+        if (domainMatch) {
+            const domainIndex = cleanTitle.indexOf(domainMatch[0]);
+            if (domainIndex !== -1) {
+                cleanTitle = cleanTitle.substring(0, domainIndex).trim();
+            }
         }
         
         // 如果清理后为空，使用网站名
