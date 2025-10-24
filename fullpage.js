@@ -184,7 +184,7 @@ class FullPageNotesManager {
                     </div>
                     <div class="domain-actions">
                         <button class="text-btn add-note-btn" data-domain="${domainName}">
-                            + 添加笔记
+                            添加笔记
                         </button>
                         <button class="text-btn edit-domain-btn" data-domain="${domainName}">
                             修改名称
