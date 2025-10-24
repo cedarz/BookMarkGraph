@@ -174,13 +174,15 @@ class FullPageNotesManager {
         return `
             <div class="domain-card" data-domain="${domainName}">
                 <div class="domain-header">
-                    <div class="domain-name">${domainName}</div>
-                    <div class="domain-stats">${notes.length} 条笔记</div>
+                    <div class="domain-info">
+                        <div class="domain-name">${domainName}</div>
+                        <div class="domain-stats">${notes.length} 条笔记</div>
+                    </div>
                     <div class="domain-actions">
-                        <button class="btn btn-primary add-note-btn" data-domain="${domainName}">
+                        <button class="text-btn add-note-btn" data-domain="${domainName}">
                             + 添加笔记
                         </button>
-                        <button class="btn btn-danger delete-domain-btn" data-domain="${domainName}">
+                        <button class="text-btn text-btn-danger delete-domain-btn" data-domain="${domainName}">
                             删除领域
                         </button>
                     </div>
