@@ -221,6 +221,9 @@ class ContentScript {
         const url = targetLink.href;
         const rawTitle = targetLink.textContent.trim() || targetLink.title || '';
         
+        // 测试弹窗显示rawTitle
+        alert(`rawTitle: "${rawTitle}"\nURL: "${url}"`);
+        
         // 解析标题和网站名
         const { title, siteName } = await this.parseLinkInfo(rawTitle, url);
 
