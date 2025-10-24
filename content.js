@@ -217,16 +217,20 @@ class ContentScript {
         const targetLink = link || this.dragElement;
         if (!targetLink) return;
 
+        // 获取链接信息
         const url = targetLink.href;
-        const title = targetLink.textContent.trim() || targetLink.title || url;
+        const rawTitle = targetLink.textContent.trim() || targetLink.title || '';
+        
+        // 解析标题和网站名
+        const { title, siteName } = this.parseLinkInfo(rawTitle, url);
 
-        console.log('发送消息到background script:', { title, url });
+        console.log('解析的链接信息:', { title, siteName, url });
 
         // 发送消息到background script
         try {
             chrome.runtime.sendMessage({
                 action: 'showAddNoteDialog',
-                data: { title, url }
+                data: { title, siteName, url }
             }, (response) => {
                 if (chrome.runtime.lastError) {
                     console.error('发送消息失败:', chrome.runtime.lastError);
@@ -241,6 +245,30 @@ class ContentScript {
             // 如果扩展上下文失效，直接显示对话框
             this.showAddNoteDialog(targetLink);
         }
+    }
+
+    parseLinkInfo(rawTitle, url) {
+        let title = rawTitle;
+        let siteName = this.getDomainName(url);
+        
+        // 如果标题包含网址信息，进行清理
+        if (title) {
+            // 移除http网址
+            const httpIndex = title.indexOf('http');
+            if (httpIndex !== -1) {
+                title = title.substring(0, httpIndex).trim();
+            }
+            
+            // 如果标题为空，使用网站名
+            if (!title) {
+                title = siteName;
+            }
+        } else {
+            // 如果没有标题，使用网站名
+            title = siteName;
+        }
+        
+        return { title, siteName };
     }
 
     addContextMenuSupport() {

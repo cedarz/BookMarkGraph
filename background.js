@@ -179,7 +179,9 @@ class BackgroundScript {
 
     async handleAddNoteRequest(data) {
         try {
-            const { title, url } = data;
+            const { title, siteName, url } = data;
+            
+            console.log('收到添加笔记请求:', { title, siteName, url });
             
             // 获取所有领域
             const result = await chrome.storage.local.get(['notesData']);
