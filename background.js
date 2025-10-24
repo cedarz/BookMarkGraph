@@ -23,23 +23,7 @@ class BackgroundScript {
                 // 创建主菜单
                 chrome.contextMenus.create({
                     id: 'addToNotes',
-                    title: '添加到笔记',
-                    contexts: ['link', 'page']
-                });
-
-                // 创建子菜单 - 先创建默认的"选择领域"选项
-                chrome.contextMenus.create({
-                    id: 'selectDomain',
-                    parentId: 'addToNotes',
-                    title: '选择领域...',
-                    contexts: ['link', 'page']
-                });
-
-                // 创建"创建新领域"选项
-                chrome.contextMenus.create({
-                    id: 'createDomain',
-                    parentId: 'addToNotes',
-                    title: '创建新领域',
+                    title: '添加当前页到',
                     contexts: ['link', 'page']
                 });
 
@@ -52,9 +36,7 @@ class BackgroundScript {
 
         // 监听右键菜单点击
         chrome.contextMenus.onClicked.addListener((info, tab) => {
-            if (info.menuItemId === 'addToNotes' || info.menuItemId === 'selectDomain') {
-                this.handleContextMenuClick(info, tab);
-            } else if (info.menuItemId === 'createDomain') {
+            if (info.menuItemId === 'createDomain') {
                 this.handleCreateDomain(info, tab);
             } else if (info.menuItemId.startsWith('domain_')) {
                 this.handleDomainClick(info, tab);
@@ -82,37 +64,20 @@ class BackgroundScript {
                         contexts: ['link', 'page']
                     });
                 });
+
+                // 添加"创建新领域"选项
+                chrome.contextMenus.create({
+                    id: 'createDomain',
+                    parentId: 'addToNotes',
+                    title: '创建新领域',
+                    contexts: ['link', 'page']
+                });
             });
         } catch (error) {
             console.error('更新右键菜单失败:', error);
         }
     }
 
-    async handleContextMenuClick(info, tab) {
-        let title, url;
-
-        if (info.linkUrl) {
-            // 点击的是链接，优先使用页面标题
-            title = info.pageTitle || tab.title || info.linkText || info.linkUrl;
-            url = info.linkUrl;
-        } else {
-            // 点击的是页面
-            title = info.pageTitle || tab.title;
-            url = info.pageUrl || tab.url;
-        }
-
-        // 获取所有领域
-        const result = await chrome.storage.local.get(['notesData']);
-        const domains = Object.keys(result.notesData || {});
-
-        if (domains.length === 0) {
-            // 如果没有领域，先创建领域
-            this.showCreateDomainDialog(title, url);
-        } else {
-            // 显示选择领域对话框
-            this.showSelectDomainDialog(domains, title, url);
-        }
-    }
 
     async handleCreateDomain(info, tab) {
         let title, url;
