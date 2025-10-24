@@ -44,8 +44,8 @@ class BackgroundScript {
         let title, url;
 
         if (info.linkUrl) {
-            // 点击的是链接
-            title = info.linkText || info.pageTitle || info.linkUrl;
+            // 点击的是链接，优先使用页面标题
+            title = info.pageTitle || tab.title || info.linkText || info.linkUrl;
             url = info.linkUrl;
         } else {
             // 点击的是页面

@@ -251,6 +251,13 @@ class ContentScript {
         let title = rawTitle;
         let siteName = this.getDomainName(url);
         
+        // 尝试从网页的title标签获取标题
+        const pageTitle = document.title;
+        if (pageTitle && pageTitle.trim()) {
+            title = pageTitle.trim();
+            console.log('使用网页title标签:', title);
+        }
+        
         // 如果标题包含网址信息，进行清理
         if (title) {
             // 移除http网址
