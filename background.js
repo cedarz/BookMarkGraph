@@ -130,10 +130,13 @@ class BackgroundScript {
 
     showFallbackDialog(domains, title, url) {
         try {
-            // background script无法使用prompt，直接添加到第一个领域
+            // 尝试通过popup显示选择对话框
             if (domains.length > 0) {
-                console.log('自动添加到第一个领域:', domains[0]);
-                this.addNoteToDomain(domains[0], title, url);
+                // 发送消息到popup，让用户选择领域
+                chrome.runtime.sendMessage({
+                    action: 'showDomainSelector',
+                    data: { domains, title, url }
+                });
             } else {
                 console.log('没有可用的领域');
             }

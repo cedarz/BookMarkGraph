@@ -352,5 +352,32 @@ class NotesManager {
     }
 }
 
+// 监听来自background script的消息
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'showDomainSelector') {
+        const { domains, title, url } = message.data;
+        showDomainSelector(domains, title, url);
+    }
+});
+
+// 显示领域选择器
+function showDomainSelector(domains, title, url) {
+    // 创建选择对话框
+    const domainList = domains.map((domain, index) => `${index + 1}. ${domain}`).join('\n');
+    const choice = prompt(`选择要添加到的领域:\n${domainList}\n\n请输入数字 (1-${domains.length}):`);
+    
+    if (choice !== null) {
+        const index = parseInt(choice) - 1;
+        if (index >= 0 && index < domains.length) {
+            // 添加笔记到选中的领域
+            notesManager.addNote(domains[index], title, url);
+            // 刷新显示
+            notesManager.renderDomains();
+        } else {
+            alert('无效的选择');
+        }
+    }
+}
+
 // 初始化笔记管理器
 const notesManager = new NotesManager();
