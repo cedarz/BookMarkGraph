@@ -339,29 +339,10 @@ class ContentScript {
         
         let cleanTitle = title.trim();
         
-        // 直接截取到http/https网址之前的内容
+        // 直接从http://或https://出现的位置开始，后面的都不要
         const httpIndex = cleanTitle.indexOf('http');
         if (httpIndex !== -1) {
             cleanTitle = cleanTitle.substring(0, httpIndex).trim();
-        }
-        
-        // 检查是否有域名模式（如 github.com, walbourn.github.io）
-        const domainPattern = /[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?/;
-        const domainMatch = cleanTitle.match(domainPattern);
-        if (domainMatch) {
-            const domainIndex = cleanTitle.indexOf(domainMatch[0]);
-            if (domainIndex !== -1) {
-                cleanTitle = cleanTitle.substring(0, domainIndex).trim();
-            }
-        }
-        
-        // 移除末尾的重复域名（如 "walbourn.github.io"）
-        const lastSpaceIndex = cleanTitle.lastIndexOf(' ');
-        if (lastSpaceIndex !== -1) {
-            const lastWord = cleanTitle.substring(lastSpaceIndex + 1);
-            if (domainPattern.test(lastWord)) {
-                cleanTitle = cleanTitle.substring(0, lastSpaceIndex).trim();
-            }
         }
         
         // 如果清理后为空，使用网站名
