@@ -53,6 +53,15 @@ class NotesManager {
         document.getElementById('testStorage').addEventListener('click', () => {
             this.testStorage();
         });
+
+        // 导出导入功能
+        document.getElementById('exportData').addEventListener('click', () => {
+            this.exportData();
+        });
+
+        document.getElementById('importData').addEventListener('click', () => {
+            this.importData();
+        });
     }
 
     showAddDomainForm() {
@@ -116,6 +125,16 @@ class NotesManager {
 
     renderDomains() {
         const container = document.getElementById('domainsContainer');
+        const totalNotesElement = document.getElementById('totalNotes');
+        
+        // 计算总笔记数
+        let totalNotes = 0;
+        for (const notes of Object.values(this.domains)) {
+            totalNotes += notes.length;
+        }
+        
+        // 更新总笔记数
+        totalNotesElement.textContent = `${totalNotes} 条笔记`;
         
         if (Object.keys(this.domains).length === 0) {
             container.innerHTML = `
@@ -139,23 +158,21 @@ class NotesManager {
     renderDomainCard(domainName, notes) {
         const notesHtml = notes.map((note, index) => `
             <div class="note-item" data-domain="${domainName}" data-note-index="${index}">
+                <div class="note-icon">${this.getFavicon(note.url)}</div>
                 <div class="note-content">
                     <a href="${note.url}" target="_blank" class="note-link">
                         ${note.title}
                     </a>
                 </div>
-                <div class="note-actions">
-                    <button class="btn btn-danger delete-note-btn" data-domain="${domainName}" data-note-index="${index}">
-                        删除
-                    </button>
-                </div>
+                <button class="note-delete delete-note-btn" data-domain="${domainName}" data-note-index="${index}">×</button>
             </div>
         `).join('');
 
         return `
-            <div class="domain-card" data-domain="${domainName}">
+            <div class="domain-section" data-domain="${domainName}">
                 <div class="domain-header">
                     <div class="domain-name">${domainName}</div>
+                    <div class="domain-stats">${notes.length} 条笔记</div>
                     <div class="domain-actions">
                         <button class="btn btn-primary add-note-btn" data-domain="${domainName}">
                             + 添加笔记
@@ -166,10 +183,20 @@ class NotesManager {
                     </div>
                 </div>
                 <div class="notes-list">
-                    ${notes.length > 0 ? notesHtml : '<p class="empty-notes">暂无笔记</p>'}
+                    ${notes.length > 0 ? notesHtml : '<div class="empty-state"><p>暂无笔记</p></div>'}
                 </div>
             </div>
         `;
+    }
+
+    getFavicon(url) {
+        try {
+            const domain = new URL(url).hostname;
+            const firstChar = domain.charAt(0).toUpperCase();
+            return firstChar;
+        } catch {
+            return '📄';
+        }
     }
 
     bindDomainEvents() {
@@ -243,6 +270,57 @@ class NotesManager {
         logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
         logDiv.scrollTop = logDiv.scrollHeight;
         console.log(message);
+    }
+
+    // 导出数据
+    exportData() {
+        const data = {
+            version: '1.0',
+            exportDate: new Date().toISOString(),
+            notesData: this.domains
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `notes-backup-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        this.debugLog('数据导出成功');
+    }
+
+    // 导入数据
+    importData() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.notesData) {
+                            this.domains = data.notesData;
+                            this.saveData();
+                            this.renderDomains();
+                            this.debugLog('数据导入成功');
+                        } else {
+                            alert('无效的数据文件');
+                        }
+                    } catch (error) {
+                        alert('文件解析失败: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        };
+        input.click();
     }
 }
 

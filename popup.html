@@ -9,8 +9,15 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>📝 笔记管理器</h1>
-            <button id="addDomain" class="btn btn-primary">+ 添加领域</button>
+            <h1>笔记管理器</h1>
+            <div class="header-info">
+                <div class="tab-count" id="totalNotes">0 条笔记</div>
+                <div class="header-actions">
+                    <a href="#" id="addDomain">+ 添加领域</a>
+                    <a href="#" id="exportData">导出数据</a>
+                    <a href="#" id="importData">导入数据</a>
+                </div>
+            </div>
         </header>
         
         <div class="domains-container" id="domainsContainer">
@@ -25,11 +32,11 @@
             </div>
         </div>
         
-        <div class="debug-section" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; border: 1px solid #dee2e6;">
-            <h4 style="margin: 0 0 10px 0; color: #495057;">🔧 调试功能</h4>
-            <button id="testAddNote" class="btn btn-primary" style="margin-right: 10px;">测试添加笔记</button>
+        <div class="debug-section">
+            <h4>🔧 调试功能</h4>
+            <button id="testAddNote" class="btn btn-primary">测试添加笔记</button>
             <button id="testStorage" class="btn btn-secondary">测试存储</button>
-            <div id="debugLog" style="margin-top: 10px; padding: 8px; background: white; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 100px; overflow-y: auto; display: none;"></div>
+            <div id="debugLog"></div>
         </div>
     </div>
     
